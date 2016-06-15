@@ -5,6 +5,8 @@
 *)
 
 -- PROPS
+property isNotify : "no"
+
 property scriptSuiteName : "Frad's Scripts"
 
 -- MAIN
@@ -20,7 +22,7 @@ tell application "OmniFocus"
 					set newTopic to do shell script "echo '" & projectNote & "' | sed -n '/$topic: /p' | sed 's/$topic: //g'"
 					set taskTitle to name of anTask
 					set name of anTask to do shell script "echo '" & taskTitle & "' | sed 's/$topic/#" & newTopic & " /g'"
-					if newTopic is not missing value then
+					if (newTopic is not missing value) and (isNotify is "yes") then
 						my notify("Changed topic.", newTopic)
 					end if
 				end if
@@ -30,6 +32,8 @@ tell application "OmniFocus"
 end tell
 
 -- NOTIFY
+
 on notify(theTitle, theDescription)
 	display notification theDescription with title scriptSuiteName subtitle theTitle
 end notify
+
