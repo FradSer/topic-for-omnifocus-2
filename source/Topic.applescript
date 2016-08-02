@@ -14,19 +14,25 @@ set newTopic to missing value
 tell application "OmniFocus"
 	tell front document
 		tell content of document window 1
-			set allTask to value of (every descendant tree where class of its value is task)
-			repeat with anTask in allTask
-				if name of anTask contains "$topic" then
-					set anProject to containing project of anTask
-					set projectNote to note of anProject
-					set newTopic to do shell script "echo '" & projectNote & "' | sed -n '/$topic: /p' | sed 's/$topic: //g'"
-					set taskTitle to name of anTask
-					set name of anTask to do shell script "echo '" & taskTitle & "' | sed 's/$topic/#" & newTopic & " /g'"
-					if (newTopic is not missing value) and (isNotify is "yes") then
-						my notify("Changed topic.", newTopic)
+			set anProject to value of (first descendant tree where class of its value is project)
+			set projectNote to note of anProject
+			set projectTitle to name of anProject
+			if projectNote does not contain "$topic" then
+				set topicName to do shell script "echo '" & projectTitle & "'|sed 's/\\[//' | sed 's/\\]//'"
+				set note of anProject to projectNote & return & "$topic: " & topicName
+			else
+				set allTask to value of (every descendant tree where class of its value is task)
+				repeat with anTask in allTask
+					if name of anTask contains "$topic" then
+						set newTopic to do shell script "echo '" & projectNote & "' | sed -n '/$topic: /p' | sed 's/$topic: //g'"
+						set taskTitle to name of anTask
+						set name of anTask to do shell script "echo '" & taskTitle & "' | sed 's/$topic/#" & newTopic & " /g'"
+						if (newTopic is not missing value) and (isNotify is "yes") then
+							my notify("Changed topic.", newTopic)
+						end if
 					end if
-				end if
-			end repeat
+				end repeat
+			end if
 		end tell
 	end tell
 end tell
@@ -36,4 +42,3 @@ end tell
 on notify(theTitle, theDescription)
 	display notification theDescription with title scriptSuiteName subtitle theTitle
 end notify
-
