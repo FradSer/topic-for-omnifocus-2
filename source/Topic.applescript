@@ -38,7 +38,6 @@ tell application "OmniFocus"
 end tell
 
 -- NOTIFY
-
 on notify(theTitle, theDescription)
 	display notification theDescription with title scriptSuiteName subtitle theTitle
 end notify
