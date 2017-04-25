@@ -5,7 +5,7 @@
 *)
 
 -- PROPS
-property isNotify : "no"
+property isNotify : false
 
 property scriptSuiteName : "Frad's Scripts"
 
@@ -19,7 +19,7 @@ tell application "OmniFocus"
 			set projectTitle to name of anProject
 			if projectNote does not contain "$topic" then
 				set topicName to do shell script "echo '" & projectTitle & "'|sed 's/\\[//' | sed 's/\\]//'"
-				set note of anProject to projectNote & return & "$topic: " & topicName
+				set note of anProject to projectNote & return & "------------------------" & return & "$topic: " & topicName
 			else
 				set allTask to value of (every descendant tree where class of its value is task)
 				repeat with anTask in allTask
@@ -27,7 +27,7 @@ tell application "OmniFocus"
 						set newTopic to do shell script "echo '" & projectNote & "' | sed -n '/$topic: /p' | sed 's/$topic: //g'"
 						set taskTitle to name of anTask
 						set name of anTask to do shell script "echo '" & taskTitle & "' | sed 's/$topic/#" & newTopic & " /g'"
-						if (newTopic is not missing value) and (isNotify is "yes") then
+						if (newTopic is not missing value) and (isNotify) then
 							my notify("Changed topic.", newTopic)
 						end if
 					end if

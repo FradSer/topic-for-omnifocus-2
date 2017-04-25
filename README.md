@@ -1,2 +1,2 @@
-# Topic for OmniFocus 2
+# Topic.scpt
 Another useful script for OmniFocus 2.
